@@ -365,21 +365,30 @@
 
 @media (max-width: 480px) {
   .categoryPage {
+    margin-top: 124px;
     .main {
       .filtersContainer {
         display: none;
       }
       .rightCol {
-        .listContainer {
-          //   display: flex;
-          //   grid-template-columns: 1fr;
-        }
         .sortContainer {
           display: none;
         }
       }
       .mobileFilter {
         display: flex;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .categoryPage {
+    .main {
+      .rightCol {
+        .listContainer {
+          grid-template-columns: 1fr;
+        }
       }
     }
   }

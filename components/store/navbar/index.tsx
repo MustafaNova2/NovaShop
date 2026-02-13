@@ -23,11 +23,14 @@ const StoreNavBar = () => {
       prevPositionY = window.scrollY;
     }
   };
-  console.log("prevPositionY:", prevPositionY);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.addEventListener("scroll", handleScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
     }
   }, []);
 
@@ -59,7 +62,7 @@ const StoreNavBar = () => {
           <div className={styles.rightButtons}>
             <NavBarProfile />
             <NavBarFavorite />
-            <NavBarShopping quantity={0} />
+            <NavBarShopping />
           </div>
         </div>
       </section>
