@@ -1,11 +1,37 @@
+"use-client";
 import styles from "./navCategory.module.scss";
+
+import { useRef } from "react";
+import Link from "next/link";
+import { useToggleMenu } from "@/hooks/useToggleMenu";
 import { ListIcon } from "@/components/icons/svgIcons";
+import { CategoriesData } from "@/data/categories";
 
 const NavBarCategory = () => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isActive, setIsActive] = useToggleMenu(false, dropdownRef);
+
+  const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setIsActive(!isActive);
+  };
+
   return (
     <div className={styles.category}>
-      <ListIcon width={12} />
-      <span>All Categories</span>
+      <button onClick={toggleMenu} className={`${isActive && styles.isActive}`}>
+        <ListIcon width={12} />
+        <span>All Categories</span>
+      </button>
+      <div
+        ref={dropdownRef}
+        className={`${styles.menu} ${isActive && styles.showMenu}`}
+      >
+        {CategoriesData.map((item, index) => (
+          <Link key={index} href={item.url}>
+            {item.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

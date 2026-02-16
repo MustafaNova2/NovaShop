@@ -3,7 +3,7 @@ export type TProductCard = {
   specs: string[];
   price: number;
   dealPrice?: number;
-  imgUrl: string;
+  imgUrl: [string, string];
   url: string;
   staticWidth?: boolean;
 };
@@ -29,4 +29,21 @@ export type TBlogCard = {
   imgUrl: string;
   url: string;
   shortText: string;
+};
+
+type TSubCategory = {
+  name: string;
+  url: string;
+  subCategories?: {
+    name: string;
+    url: string;
+  }[];
+};
+
+export type TCategory = {
+  name: string;
+  iconUrl: string;
+  iconSize: [number, number];
+  url: string;
+  subCategories?: TSubCategory[];
 };
