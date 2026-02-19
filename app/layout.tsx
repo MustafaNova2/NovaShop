@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.scss";
+import Script from "next/script";
 
 const outfitFont = localFont({
   src: "../public/fonts/Outfit-VariableFont.ttf",
@@ -18,7 +19,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          async
+          id="googelAnlytics"
+          src={
+            "https://www.googletagmanager.com/gtag/js?id=" +
+            process.env.GOOGLE_ANALYTICS
+          }
+        />
+        <Script id="analyticsData">
+          {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+            
+              gtag('config', '${process.env.GOOGLE_ANALYTICS}');
+            
+          `}
+        </Script>
+      </head>
       <body className={outfitFont.className}>{children}</body>
     </html>
   );
