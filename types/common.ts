@@ -56,3 +56,20 @@ export type TOptionSet = {
   options: NameValue[];
   type: OptionSetType;
 };
+
+export type TSingleOption = {
+  optionSetID: string;
+  name: string;
+  value: string;
+};
+
+export type TSpecGroup = {
+  id: string;
+  title: string;
+  specs: string[];
+};
+
+export type TSingleSpec = {
+  specGroupID: string;
+  value: string;
+};

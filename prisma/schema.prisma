@@ -14,17 +14,19 @@ model Category {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   parentID String? @db.ObjectId
 
-  name            String               @unique
-  url             String               @unique
-  iconUrl         String?
-  iconSize        Int[]
-  Category_Option Category_OptionSet[]
+  name               String
+  url                String
+  iconUrl            String?
+  iconSize           Int[]
+  Category_Option    Category_OptionSet[]
+  Category_SpecGroup Category_SpecGroup[]
+  products           Product[]
 }
 
 model Category_OptionSet {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  option     OptionSet @relation(fields: [optionID], references: [id])
+  option     OptionSet @relation(fields: [optionID], references: [id], onDelete: Cascade)
   optionID   String    @db.ObjectId
   category   Category  @relation(fields: [categoryID], references: [id])
   categoryID String    @db.ObjectId
@@ -34,7 +36,7 @@ model Category_OptionSet {
 
 model OptionSet {
   id              String               @id @default(auto()) @map("_id") @db.ObjectId
-  name            String               @unique
+  name            String
   options         NameValue[]
   type            OptionSetType
   Category_Option Category_OptionSet[]
@@ -45,7 +47,43 @@ type NameValue {
   value String
 }
 
+model Category_SpecGroup {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  specGroup   SpecGroup @relation(fields: [specGroupID], references: [id], onDelete: Cascade)
+  specGroupID String    @db.ObjectId
+  category    Category  @relation(fields: [categoryID], references: [id])
+  categoryID  String    @db.ObjectId
+
+  @@unique([specGroupID, categoryID])
+}
+
+model SpecGroup {
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  title              String
+  specs              String[]
+  Category_SpecGroup Category_SpecGroup[]
+}
+
 enum OptionSetType {
   TEXT
   COLOR
+}
+
+model Product {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  name       String        @unique
+  desc       String?
+  images     String[]
+  category   Category      @relation(fields: [categoryID], references: [id])
+  categoryID String        @db.ObjectId
+  optionSets String[]      @db.ObjectId
+  price      Float
+  salePrice  Float?
+  specs      ProductSpec[]
+}
+
+type ProductSpec {
+  specGroupID String
+  specValues  String[]
 }
