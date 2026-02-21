@@ -11,12 +11,45 @@ import LineList from "@/components/UI/lineList";
 import { ProductsData } from "@/data/products";
 import { sortDropdownData } from "@/data/uiElementsData";
 import { useState } from "react";
-import { CloseIcon } from "@/components/icons/svgIcons";
+import { CloseIcon, SearchIcon } from "@/components/icons/svgIcons";
 import { redirect, useParams } from "next/navigation";
+import CheckBox from "@/components/UI/checkBox";
+import PriceSlider from "@/components/UI/priceSlider";
+import { TFilters } from "@/types/product";
+import Button from "@/components/UI/button";
+
+const initialFilters: TFilters = {
+  stockStatus: "all",
+  brands: [
+    {
+      id: "1",
+      name: "apple",
+      isSelected: true,
+    },
+    {
+      id: "2",
+      name: "Sony",
+      isSelected: true,
+    },
+    {
+      id: "3",
+      name: "Samsung",
+      isSelected: true,
+    },
+    {
+      id: "4",
+      name: "Google",
+      isSelected: true,
+    },
+  ],
+  filterPriceMinMax: [0, 100],
+  priceMinMax: [0, 100],
+};
 
 const ListPage = () => {
   const [sortIndex, setSortIndex] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<TFilters>(initialFilters);
   const { params } = useParams<{ params: string[] }>();
 
   if (!params || params.length <= 0) redirect("/");
@@ -49,6 +82,11 @@ const ListPage = () => {
     return link;
   };
 
+  const handleBrandChange = (index: number) => {
+    const newBrandList = [...filters.brands];
+    newBrandList[index].isSelected = !newBrandList[index].isSelected;
+    setFilters({ ...filters, brands: newBrandList });
+  };
   return (
     <div className={styles.listPage}>
       <div className={styles.header}>
@@ -96,102 +134,66 @@ const ListPage = () => {
               <div className={styles.eachFilter}>
                 <div className={styles.header}>
                   <h3>Availability</h3>
-                  <button />
                 </div>
                 <div className={styles.body}>
-                  <div>
-                    <input type="checkbox" id="inStock" />
-                    <label htmlFor="inStock">In stock</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="outOfStock" />
-                    <label htmlFor="outOfStock">Out of stock</label>
-                  </div>
+                  <CheckBox
+                    text="All"
+                    onClick={() =>
+                      setFilters({ ...filters, stockStatus: "all" })
+                    }
+                    isChecked={filters.stockStatus === "all"}
+                  />
+                  <CheckBox
+                    text="In Stock"
+                    onClick={() =>
+                      setFilters({ ...filters, stockStatus: "inStock" })
+                    }
+                    isChecked={filters.stockStatus === "inStock"}
+                  />
+                  <CheckBox
+                    text="Out of Stock"
+                    onClick={() =>
+                      setFilters({ ...filters, stockStatus: "outStock" })
+                    }
+                    isChecked={filters.stockStatus === "outStock"}
+                  />
                 </div>
               </div>
               <div className={styles.eachFilter}>
                 <div className={styles.header}>
                   <h3>Price</h3>
-                  <button />
                 </div>
                 <div className={styles.body}>
-                  <div className={styles.priceRange}>
-                    <input type="range" />
-                  </div>
-                  <div className={styles.priceInputs}>
-                    <div>
-                      <label>From</label>
-                      <input type="number" />
-                    </div>
-                    <hr />
-                    <div>
-                      <label>To</label>
-                      <input type="number" />
-                    </div>
-                  </div>
+                  <PriceSlider
+                    minValue={2000}
+                    maxValue={6000}
+                    onChange={() => ""}
+                  />
                 </div>
               </div>
               <div className={styles.eachFilter}>
                 <div className={styles.header}>
-                  <h3>Colors</h3>
-                  <button />
+                  <h3>Brand</h3>
                 </div>
                 <div className={styles.body}>
-                  <div className={styles.searchInput}>
-                    <input type="text" placeholder="Search Color" />
-                  </div>
+                  {/* <div className={styles.searchInput}>
+                    <SearchIcon width={14} strokeWidth={1} />
+                    <input type="text" placeholder="Search Brands" />
+                  </div> */}
                   <div className={styles.optionsList}>
-                    <div>
-                      <input type="checkbox" id="colorBlack" />
-                      <label htmlFor="colorBlack">Black</label>
-                      <div className={`${styles.colorBox} ${styles.black}`} />
-                    </div>
-                    <div>
-                      <input type="checkbox" id="colorBlue" />
-                      <label htmlFor="colorBlue">Blue</label>
-                      <div className={`${styles.colorBox} ${styles.blue}`} />
-                    </div>
-                    <div>
-                      <input type="checkbox" id="colorRed" />
-                      <label htmlFor="colorRed">Red</label>
-                      <div className={`${styles.colorBox} ${styles.red}`} />
-                    </div>
-                    <div>
-                      <input type="checkbox" id="colorGreen" />
-                      <label htmlFor="colorGreen">Green</label>
-                      <div className={`${styles.colorBox} ${styles.green}`} />
-                    </div>
+                    {initialFilters.brands.map((brand, index) => (
+                      <CheckBox
+                        key={brand.id}
+                        isChecked={brand.isSelected}
+                        text={brand.name}
+                        onClick={() => handleBrandChange(index)}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
-              <div className={styles.eachFilter}>
-                <div className={styles.header}>
-                  <h3>Options</h3>
-                  <button />
-                </div>
-                <div className={styles.body}>
-                  <div className={styles.searchInput}>
-                    <input type="text" placeholder="Search Option" />
-                  </div>
-                  <div className={styles.optionsList}>
-                    <div>
-                      <input type="checkbox" id="option1" />
-                      <label htmlFor="option1">Option 1</label>
-                    </div>
-                    <div>
-                      <input type="checkbox" id="option2" />
-                      <label htmlFor="option2">Option 2</label>
-                    </div>
-                    <div>
-                      <input type="checkbox" id="option3" />
-                      <label htmlFor="option3">Option 3</label>
-                    </div>
-                    <div>
-                      <input type="checkbox" id="option4" />
-                      <label htmlFor="option4">Option 4</label>
-                    </div>
-                  </div>
-                </div>
+              <div className={styles.apply}>
+                <Button text="Apply Changes" />
               </div>
             </div>
           </div>

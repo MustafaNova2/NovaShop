@@ -1,3 +1,5 @@
+import { ProductSpec } from "@prisma/client";
+
 export type TUserReview = {
   userName: string;
   userImage: string;
@@ -48,4 +50,41 @@ export type TProduct = {
   gallery: string[];
   specification: TProductSpec[];
   reviews: TUserReview[];
+};
+
+export type TAddProductFormValues = {
+  name: string;
+  isAvailable: boolean;
+  brandID: string;
+  desc?: string;
+  price: string;
+  salePrice?: string;
+  images: string[];
+  categoryID: string;
+  specifications: ProductSpec[];
+};
+
+export type TProductListItem = {
+  id: string;
+  name: string;
+  category: {
+    id: string;
+    name: string;
+  };
+};
+
+export type TBrand = {
+  id: string;
+  name: string;
+};
+
+export type TFilters = {
+  stockStatus: "all" | "inStock" | "outStock";
+  priceMinMax: [number, number];
+  filterPriceMinMax: [number, number];
+  brands: {
+    id: string;
+    name: string;
+    isSelected: boolean;
+  }[];
 };

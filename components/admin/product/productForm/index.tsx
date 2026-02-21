@@ -8,30 +8,47 @@ import { useEffect, useState } from "react";
 import { getAllCategoriesJSON } from "@/actions/category/category";
 import { TGroupJSON } from "@/types/categories";
 import { getCategorySpecs } from "@/actions/category/specifications";
-import { SpecGroup } from "@prisma/client";
+import { ProductSpec, SpecGroup } from "@prisma/client";
+import { TAddProductFormValues, TBrand } from "@/types/product";
+import { getAllBrands } from "@/actions/brands/brands";
 
 const categoryListFirstItem: TDropDown = {
   text: "Select A Category....",
   value: "",
 };
 
-const ProductForm = () => {
+const brandListFirstItem: TDropDown = {
+  text: "Select A Brand....",
+  value: "",
+};
+
+interface IProps {
+  formValues: TAddProductFormValues;
+  onChange: (props: TAddProductFormValues) => void;
+}
+
+const ProductForm = ({ formValues: props, onChange }: IProps) => {
   const [categoryList, setCategoryList] = useState<TDropDown[]>([
     categoryListFirstItem,
   ]);
+  const [brandList, setBrandList] = useState<TDropDown[]>([brandListFirstItem]);
   const [selectedCategoryListIndex, setSelectedCategoryListIndex] = useState(0);
-  const [categoriesJSON, setCategoriesJSON] = useState<TGroupJSON[]>([]);
-  const [selectedCategoryJSON, setSelectedCategoryJSON] = useState<
-    number | null
-  >(0);
+  const [selectedBrandListIndex, setSelectedBrandListIndex] = useState(0);
+
   const [categorySpecs, setCategorySpecs] = useState<SpecGroup[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       const result = await getAllCategoriesJSON();
       if (result.res) {
-        // setCategoriesJSON(result.res);
         setCategoryList(convertJSONtoDropdownList(result.res));
+      }
+    };
+
+    const fetchBrands = async () => {
+      const result = await getAllBrands();
+      if (result.res) {
+        setBrandList(convertBrandsToDropdownList(result.res));
       }
     };
 
@@ -64,41 +81,174 @@ const ProductForm = () => {
       return dropDownData;
     };
 
+    const convertBrandsToDropdownList = (brandList: TBrand[]): TDropDown[] => {
+      const dropDownData: TDropDown[] = [brandListFirstItem];
+      brandList.forEach((brand) => {
+        dropDownData.push({
+          text: brand.name,
+          value: brand.id,
+        });
+      });
+
+      return dropDownData;
+    };
+
     fetchCategories();
+    fetchBrands();
   }, []);
 
   const handleCategoryChange = (index: number) => {
     setSelectedCategoryListIndex(index);
     if (index === 0) {
+      onChange({
+        ...props,
+        specifications: JSON.parse(JSON.stringify(props.specifications)),
+        categoryID: "",
+      });
       setCategorySpecs([]);
     } else {
       getSpecGroup(categoryList[index].value);
     }
   };
 
+  const handleBrandChange = (index: number) => {
+    setSelectedBrandListIndex(index);
+    onChange({ ...props, brandID: brandList[index].value });
+  };
+
   const getSpecGroup = async (categoryID: string) => {
     const response = await getCategorySpecs(categoryID);
-    if (response.res) setCategorySpecs(response.res);
+    if (response.res) {
+      const specArray: ProductSpec[] = [];
+      response.res.forEach((item) => {
+        specArray.push({
+          specGroupID: item.id,
+          specValues: item.specs.map(() => ""),
+        });
+      });
+      onChange({
+        ...props,
+        specifications: JSON.parse(JSON.stringify(specArray)),
+        categoryID: categoryID,
+      });
+      setCategorySpecs(response.res);
+    }
   };
-  console.log(categorySpecs);
+
   return (
     <div className={styles.productForm}>
       <div className={styles.nameAndCat}>
         <div>
           <span>Name:</span>
-          <input type="text" placeholder="Name..." />
+          <input
+            type="text"
+            value={props.name}
+            placeholder="Name..."
+            onChange={(e) =>
+              onChange({
+                ...props,
+                name: e.currentTarget.value,
+              })
+            }
+          />
         </div>
         <div>
           <span>Short Descriptions:</span>
-          <input type="text" placeholder="Short Description..." />
+          <input
+            type="text"
+            value={props.desc}
+            onChange={(e) =>
+              onChange({
+                ...props,
+                desc: e.currentTarget.value,
+              })
+            }
+            placeholder="Short Description..."
+          />
         </div>
         <div>
           <span>Price:</span>
-          <input type="number" placeholder="0.00€" />
+          <input
+            type="number"
+            value={props.price}
+            onChange={(e) =>
+              onChange({
+                ...props,
+                price: e.currentTarget.value,
+              })
+            }
+            placeholder="0.00€"
+          />
         </div>
         <div>
           <span>Sale Price:</span>
-          <input type="number" placeholder="0.00€" />
+          <input
+            type="number"
+            value={props.salePrice}
+            onChange={(e) =>
+              onChange({
+                ...props,
+                salePrice: e.currentTarget.value,
+              })
+            }
+            placeholder="0.00€"
+          />
+        </div>
+        <div>
+          <span>Is In Stock:</span>
+          <div className={styles.inStockSwitch}>
+            <span
+              className={props.isAvailable ? styles.available : ""}
+              onClick={() => onChange({ ...props, isAvailable: true })}
+            >
+              In Stock
+            </span>
+            <span
+              className={!props.isAvailable ? styles.notAvailable : ""}
+              onClick={() => onChange({ ...props, isAvailable: false })}
+            >
+              Out Of Stock
+            </span>
+          </div>
+        </div>
+        <div>
+          <span>Brand:</span>
+          <DropDownList
+            data={brandList}
+            width="200px"
+            selectedIndex={selectedBrandListIndex}
+            onChange={handleBrandChange}
+          />
+        </div>
+        <div>
+          <span>Images:</span>
+          <div className={styles.imgInputsContainer}>
+            {props.images.map((img, index) => (
+              <input
+                key={index}
+                type="text"
+                value={img}
+                onChange={(e) => {
+                  props.images[index] = e.currentTarget.value;
+                  onChange({ ...props });
+                }}
+              />
+            ))}
+          </div>
+          <Button
+            text="+"
+            onClick={() => {
+              props.images.push("");
+              onChange({ ...props });
+            }}
+          />
+          <Button
+            text="-"
+            onClick={() => {
+              props.images.pop();
+              onChange({ ...props });
+            }}
+          />
         </div>
         <div>
           <span>Category</span>
@@ -111,26 +261,37 @@ const ProductForm = () => {
         </div>
       </div>
       <div className={styles.specs}>
-        <span className={styles.col1}>Specifications:</span>
-        <div className={styles.col3}>
+        <span>Specifications:</span>
+        <div className={styles.specGroups}>
           {categorySpecs.length > 0 ? (
-            <div>
-              {categorySpecs.map((specGroup) => (
-                <div key={specGroup.id}>
-                  <span>{specGroup.title}</span>
-                  <div>
-                    {specGroup.specs.map((spec, index) => (
-                      <div key={index}>
+            <>
+              {categorySpecs.map((specGroup, groupIndex) => (
+                <div className={styles.specGroupRow} key={specGroup.id}>
+                  <span className={styles.header}>{specGroup.title}</span>
+                  <>
+                    {specGroup.specs.map((spec, specIndex) => (
+                      <div className={styles.specRow} key={specIndex}>
                         <span>{spec}</span>
-                        <input type="text" />
+                        <input
+                          type="text"
+                          value={
+                            props.specifications[groupIndex]?.specValues[
+                              specIndex
+                            ]
+                          }
+                          onChange={(e) => {
+                            props.specifications[groupIndex].specValues[
+                              specIndex
+                            ] = e.currentTarget.value;
+                            onChange({ ...props });
+                          }}
+                        />
                       </div>
                     ))}
-
-                    <Button onClick={() => console.log("")} text="+" />
-                  </div>
+                  </>
                 </div>
               ))}
-            </div>
+            </>
           ) : (
             <span>Can not Find! </span>
           )}
