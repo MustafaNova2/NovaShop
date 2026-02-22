@@ -180,6 +180,15 @@
                 }
               }
             }
+
+            > .subCategories {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 12px;
+              color: nth($color-light, 8);
+              font-size: 1.4rem;
+            }
           }
         }
         > .apply {
@@ -226,35 +235,41 @@
         gap: 8px;
         margin-bottom: 60px;
       }
-
-      .pagingContainer {
+      > .noItemContainer {
         width: 100%;
-        height: auto;
+        height: 100%;
         display: flex;
-        justify-content: center;
-        gap: 12px;
-        font-size: 1.6rem;
-        > button {
-          color: nth($color-light, 5);
-          width: 36px;
-          height: 36px;
-          border-radius: 4px;
-          font-size: 1.6rem;
-          border: none;
-          cursor: pointer;
-          background-color: white;
-          &:hover {
-            background-color: nth($color-light, 2);
+        flex-direction: column;
+        gap: 60px;
+        color: nth($color-light, 8);
+        align-items: center;
+        margin-top: 60px;
+        font-size: 1.8rem;
+        font-weight: 300;
+        > div {
+          font-size: 1.4rem;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          > span {
+            width: 100%;
+            text-align: center;
           }
-        }
-        .active {
-          cursor: default;
-          border-radius: 8px;
-          border: 1px solid nth($color-light, 7);
-          color: nth($color-light, 8);
-          font-weight: 500;
-          &:hover {
-            background-color: white;
+          > div {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+
+            > a {
+              border: 1px solid nth($color-light, 3);
+              padding: 4px 16px;
+              border-radius: 6px;
+              transition: background-color 0.3s;
+              &:hover {
+                background-color: nth($color-light, 1);
+              }
+            }
           }
         }
       }
