@@ -89,12 +89,13 @@ export type TBrand = {
 export type TFilters = {
   stockStatus: "all" | "inStock" | "outStock";
   priceMinMax: [number, number];
-  filterPriceMinMax: [number, number];
-  brands: {
-    id: string;
-    name: string;
-    isSelected: boolean;
-  }[];
+  priceMinMaxLimitation: [number, number];
+  brands: TFilterBrands[];
+};
+export type TFilterBrands = {
+  id: string;
+  name: string;
+  isSelected: boolean;
 };
 
 export type TListItem = {
@@ -119,6 +120,13 @@ export type TSpecification = {
   }[];
 };
 
+export type TPath = {
+  id: string;
+  parentID: string | null;
+  name: string;
+  url: string;
+};
+
 export type TProductPageInfo = {
   id: string;
   name: string;
@@ -130,4 +138,5 @@ export type TProductPageInfo = {
   price: number;
   salePrice: number | null;
   specifications: TSpecification[];
+  path: TPath[];
 };

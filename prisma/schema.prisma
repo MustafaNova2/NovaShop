@@ -85,6 +85,7 @@ model Product {
   specs           ProductSpec[]
   brand           Brand         @relation(fields: [brandID], references: [id])
   brandID         String        @db.ObjectId
+  PageVisit       PageVisit[]
 }
 
 type ProductSpec {
@@ -96,6 +97,21 @@ model Brand {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String    @unique
   products Product[]
+}
+
+model PageVisit {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  time      DateTime? @default(now())
+  pageType  PageType
+  pagePath  String?
+  productID String?   @db.ObjectId
+  product   Product?  @relation(fields: [productID], references: [id])
+}
+
+enum PageType {
+  MAIN
+  LIST
+  PRODUCT
 }
 
 // ---------------------- USER MANAGEMENT SECTION ---------------------- 

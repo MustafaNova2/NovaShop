@@ -1,14 +1,31 @@
 "use server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { TListItem, TProductPath } from "@/types/product";
+import { TFilters, TListItem, TProductPath } from "@/types/product";
+import { TListSort } from "@/types/list";
 
-export const getList = async (pathList: string[]) => {
+const ValidateSort = z.object({
+  sortName: z.enum(["id", "price", "name"]),
+  sortType: z.enum(["asc", "desc"]),
+});
+
+export const getList = async (
+  pathList: string[],
+  sortData: TListSort,
+  filters: TFilters
+) => {
+  if (!ValidateSort.safeParse(sortData).success)
+    return { error: "Invalid Path" };
   if (!pathList || pathList.length > 3 || pathList.length === 0)
     return { error: "Invalid Path" };
 
   const categoryID = await findCategoryFromPathArray(pathList);
   if (categoryID === "") return { error: "Invalid Path Name" };
+
+  const subCategories: TProductPath[] | null = await getSubCategories(
+    categoryID
+  );
+  if (!subCategories) return { error: "Invalid Sub Categories" };
 
   const allRelatedCategories = await findCategoryChildren(
     categoryID,
@@ -17,25 +34,24 @@ export const getList = async (pathList: string[]) => {
   if (!allRelatedCategories || allRelatedCategories.length === 0)
     return { error: "Invalid Path Name" };
 
-  const result = await getProductsByCategories(allRelatedCategories);
+  const result = await getProductsByCategories(
+    allRelatedCategories,
+    sortData,
+    filters
+  );
   if (!result) return { error: "Can't Find Product!" };
-  return { res: result };
+
+  return { products: result, subCategories: subCategories };
 };
 
-export const getSubCategories = async (pathList: string[]) => {
-  if (!pathList || pathList.length > 3 || pathList.length === 0)
-    return { error: "Invalid Path" };
-
-  const categoryID = await findCategoryFromPathArray(pathList);
-  if (categoryID === "") return { error: "Invalid Path Name" };
-
+const getSubCategories = async (catID: string) => {
   try {
     const result = await db.category.findMany({
       where: {
-        parentID: categoryID,
+        parentID: catID,
       },
     });
-    if (!result) return { error: "Invalid Data!" };
+    if (!result) return null;
     const subCategories: TProductPath[] = [];
     result.forEach((cat) => {
       subCategories.push({
@@ -43,9 +59,9 @@ export const getSubCategories = async (pathList: string[]) => {
         url: cat.url,
       });
     });
-    return { res: subCategories };
+    return subCategories;
   } catch (error) {
-    return { error: JSON.stringify(error) };
+    return null;
   }
 };
 
@@ -97,11 +113,50 @@ const findCategoryChildren = async (catID: string, numberOfParents: number) => {
   }
 };
 
-const getProductsByCategories = async (categories: string[]) => {
+const getProductsByCategories = async (
+  categories: string[],
+  sortData: TListSort,
+  filters: TFilters
+) => {
+  const brands: string[] | null = filters.brands.length > 0 ? [] : null;
+  if (brands) {
+    filters.brands.forEach((brand) => {
+      if (brand.isSelected) return brands.push(brand.id);
+    });
+  }
+
+  let isAvailable: boolean | null = null;
+  if (filters.stockStatus === "inStock") isAvailable = true;
+  if (filters.stockStatus === "outStock") isAvailable = false;
+
+  const isInitialPrice = filters.priceMinMax[1] === 0;
+
   try {
     const result: TListItem[] | null = await db.product.findMany({
       where: {
-        categoryID: { in: categories },
+        AND: [
+          {
+            categoryID: { in: categories },
+          },
+          isAvailable !== null
+            ? {
+                isAvailable: isAvailable,
+              }
+            : {},
+          brands
+            ? {
+                brandID: { in: brands },
+              }
+            : {},
+          !isInitialPrice
+            ? {
+                price: {
+                  gt: filters.priceMinMax[0],
+                  lte: filters.priceMinMax[1],
+                },
+              }
+            : {},
+        ],
       },
       select: {
         id: true,
@@ -117,6 +172,9 @@ const getProductsByCategories = async (categories: string[]) => {
         salePrice: true,
         specialFeatures: true,
         isAvailable: true,
+      },
+      orderBy: {
+        [sortData.sortName]: sortData.sortType,
       },
     });
     if (!result) return null;
