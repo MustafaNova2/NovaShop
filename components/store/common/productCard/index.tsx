@@ -1,6 +1,8 @@
+import styles from "./productCard.module.scss";
+
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./productCard.module.scss";
+
 import { TProductCard } from "@/types/common";
 
 const ProductCard = ({
@@ -14,7 +16,8 @@ const ProductCard = ({
   staticWidth = false,
 }: TProductCard) => {
   return (
-    <div
+    <Link
+      href={url}
       className={`${styles.productCard} ${staticWidth && styles.staticWidth} `}
     >
       {!isAvailable && (
@@ -22,13 +25,11 @@ const ProductCard = ({
           <span> Out of Stock</span>
         </div>
       )}
-      <Link href={url} className={styles.imageWrapper}>
+      <div className={styles.imageWrapper}>
         <Image src={imgUrl[0]} alt={name} fill sizes="(max-width: 240px)" />
         <Image src={imgUrl[1]} alt={name} fill sizes="(max-width: 240px)" />
-      </Link>
-      <Link href={url}>
-        <span>{name}</span>
-      </Link>
+      </div>
+      <span className={styles.title}>{name}</span>
       <div className={styles.specWrapper}>
         {specs.map((spec, index) => (
           <span key={index}>{spec}</span>
@@ -68,7 +69,7 @@ const ProductCard = ({
           <button className={styles.addFavorite} />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

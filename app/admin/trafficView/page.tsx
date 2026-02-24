@@ -5,9 +5,9 @@ const convertTime = (time: Date) => {
   return (
     time.getFullYear() +
     "." +
-    time.getMonth().toLocaleString("en-us", { minimumIntegerDigits: 2 }) +
+    (time.getMonth() + 1).toLocaleString("en-us", { minimumIntegerDigits: 2 }) +
     "." +
-    time.getDay().toLocaleString("en-us", { minimumIntegerDigits: 2 }) +
+    time.getDate().toLocaleString("en-us", { minimumIntegerDigits: 2 }) +
     "  --  " +
     time.getHours().toLocaleString("en-us", { minimumIntegerDigits: 2 }) +
     ":" +
