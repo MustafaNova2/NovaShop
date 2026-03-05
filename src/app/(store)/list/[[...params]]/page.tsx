@@ -1,5 +1,4 @@
 "use client";
-// import styles from "./list.module.scss";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -88,9 +87,11 @@ const ListPage = () => {
 
   const toggleFiltersWindow = (visibility: boolean) => {
     setShowFilters(visibility);
-    visibility
-      ? document.documentElement.classList.add("noScroll")
-      : document.documentElement.classList.remove("noScroll");
+    if (visibility) {
+      document.documentElement.classList.add("noScroll");
+    } else {
+      document.documentElement.classList.remove("noScroll");
+    }
   };
 
   const getPageHeader = () => {
@@ -125,7 +126,7 @@ const ListPage = () => {
 
     return true;
   };
-  let isFilterChanged: boolean = defineFilterChangeStatus();
+  const isFilterChanged: boolean = defineFilterChangeStatus();
   const handleApplyFilter = () => {
     const newFilter: TFilters = {
       brands: JSON.parse(JSON.stringify(filters.brands)),
