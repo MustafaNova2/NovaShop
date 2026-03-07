@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { SlidesData } from "@/data/homepageData";
-import { ArrowIcon } from "@/components/icons/svgIcons";
 import { useEffect, useState } from "react";
+
+import { ArrowIcon } from "@/components/icons/svgIcons";
+import { SlidesData } from "@/data/homepageData";
 import { cn } from "@/shared/utils/styling";
 
-const HomeSlider = () => {
+export const HomeSlider = () => {
   const [activeSlideNum, setActiveSlideNum] = useState(0);
   const touchPos = {
     start: 0,
@@ -163,5 +164,3 @@ const HomeSlider = () => {
     </div>
   );
 };
-
-export default HomeSlider;

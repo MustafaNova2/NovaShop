@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Button from "@/components/UI/button";
-import Popup from "@/components/UI/popup";
+
 
 import {
   addCategory,
@@ -12,17 +11,19 @@ import {
   TAddCategory,
   TUpdateCategory,
 } from "@/actions/category/category";
-
 import GroupCategory from "@/components/admin/forms/groupCategory";
-import CategoryOptions from "./categoryOptions";
+import Button from "@/components/UI/button";
+import Popup from "@/components/UI/popup";
+
 import AddCategory from "./addCategory";
 import Category from "./category";
+import CategoryOptions from "./categoryOptions";
 
-interface IProps {
+type TProps = {
   data: TGetAllCategories;
   categories: TGetAllCategories[];
   onReset: () => void;
-}
+};
 
 const initialCategory: TAddCategory = {
   name: "",
@@ -32,7 +33,7 @@ const initialCategory: TAddCategory = {
   iconUrl: null,
 };
 
-const RowCatGroup = ({ data, categories, onReset }: IProps) => {
+const RowCatGroup = ({ data, categories, onReset }: TProps) => {
   const { id: groupId, name } = data;
   const [showOptions, setShowOptions] = useState(false);
   const [showEdit, setShowEdit] = useState(false);

@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import Button from "@/components/UI/button";
-import { TSingleSpec, TSpecGroup } from "@/types/common";
-import { addSingleSpec, deleteSingleSpec, deleteSpecGroup } from "@/actions/category/categoryOptions";
-import Input from "@/components/UI/input";
 
-interface IProps {
+import { addSingleSpec, deleteSingleSpec, deleteSpecGroup } from "@/actions/category/categoryOptions";
+import Button from "@/components/UI/button";
+import Input from "@/components/UI/input";
+import { TSingleSpec, TSpecGroup } from "@/types/common";
+
+type TProps = {
   data: TSpecGroup;
   reloadRequest: () => void;
-}
+};
 
-const SpecGroup = ({ data, reloadRequest }: IProps) => {
+const SpecGroup = ({ data, reloadRequest }: TProps) => {
   const { id, title, specs } = data;
   const [isLoading, setIsLoading] = useState(false);
   const [specToAdd, setSpecToAdd] = useState("");

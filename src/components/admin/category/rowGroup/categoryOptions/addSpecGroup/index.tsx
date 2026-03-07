@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 
-import Button from "@/components/UI/button";
 import { addSpecGroup } from "@/actions/category/categoryOptions";
-import { TSpecGroup } from "@/types/common";
+import Button from "@/components/UI/button";
 import Input from "@/components/UI/input";
+import { TSpecGroup } from "@/types/common";
 
-interface IProps {
+type TProps = {
   categorySpecGroupID: string;
   reloadRequest: () => void;
-}
+};
 
-const AddSpecGroup = ({ categorySpecGroupID, reloadRequest }: IProps) => {
+const AddSpecGroup = ({ categorySpecGroupID, reloadRequest }: TProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
 

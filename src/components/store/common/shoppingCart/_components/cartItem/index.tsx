@@ -1,18 +1,22 @@
 "use client";
 import Image from "next/image";
-import { TCartItemData } from "@/types/shoppingCart";
-import { DeleteIcon } from "@/components/icons/svgIcons";
-import { useDispatch } from "react-redux";
-import { modifyQuantity, remove } from "@/store/shoppingCart";
-import Quantity from "../../../quantity";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
 
-interface IProps {
+import { DeleteIcon } from "@/components/icons/svgIcons";
+import { modifyQuantity, remove } from "@/store/shoppingCart";
+import { TCartItemData } from "@/types/shoppingCart";
+
+
+import Quantity from "../../../quantity";
+
+
+type TProps = {
   data: TCartItemData;
   onLinkClicked: () => void;
-}
+};
 
-const CartItem = ({ data, onLinkClicked }: IProps) => {
+const CartItem = ({ data, onLinkClicked }: TProps) => {
   const { productName, productId, imgUrl, price, dealPrice = 0, quantity } = data;
 
   const dispatch = useDispatch();

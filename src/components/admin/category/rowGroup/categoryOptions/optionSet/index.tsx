@@ -1,19 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { TOptionSet, TSingleOption } from "@/types/common";
-import Button from "@/components/UI/button";
 
-// -------------- ACTIONS --------------
 import { addSingleOption, deleteOptionSet, deleteSingleOption } from "@/actions/category/categoryOptions";
+import Button from "@/components/UI/button";
 import Input from "@/components/UI/input";
+import { TOptionSet, TSingleOption } from "@/types/common";
 
-interface IProps {
+type TProps = {
   data: TOptionSet;
   reloadRequest: () => void;
-}
+};
 
-const OptionSet = ({ data, reloadRequest }: IProps) => {
+const OptionSet = ({ data, reloadRequest }: TProps) => {
   const { id, name, options } = data;
   const [isLoading, setIsLoading] = useState(false);
   const [nameValuePair, setNameValuePair] = useState<[string, string]>(["", ""]);

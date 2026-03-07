@@ -1,17 +1,18 @@
 "use client";
 
-import { TDropDown } from "@/types/uiElements";
-import DropDownList from "@/components/UI/dropDown";
-import Button from "@/components/UI/button";
-import { useEffect, useState } from "react";
-import { getAllCategoriesJSON } from "@/actions/category/category";
-import { TGroupJSON } from "@/types/categories";
-import { getCategorySpecs } from "@/actions/category/specifications";
 import { ProductSpec, SpecGroup } from "@prisma/client";
-import { TAddProductFormValues, TBrand } from "@/types/product";
+import { useEffect, useState } from "react";
+
 import { getAllBrands } from "@/actions/brands/brands";
+import { getAllCategoriesJSON } from "@/actions/category/category";
+import { getCategorySpecs } from "@/actions/category/specifications";
+import Button from "@/components/UI/button";
+import DropDownList from "@/components/UI/dropDown";
 import Input from "@/components/UI/input";
 import { cn } from "@/shared/utils/styling";
+import { TGroupJSON } from "@/types/categories";
+import { TAddProductFormValues, TBrand } from "@/types/product";
+import { TDropDown } from "@/types/uiElements";
 
 const categoryListFirstItem: TDropDown = {
   text: "Select A Category....",
@@ -23,12 +24,12 @@ const brandListFirstItem: TDropDown = {
   value: "",
 };
 
-interface IProps {
+type TProps = {
   formValues: TAddProductFormValues;
   onChange: (props: TAddProductFormValues) => void;
-}
+};
 
-const ProductForm = ({ formValues: props, onChange }: IProps) => {
+const ProductForm = ({ formValues: props, onChange }: TProps) => {
   const [categoryList, setCategoryList] = useState<TDropDown[]>([categoryListFirstItem]);
   const [brandList, setBrandList] = useState<TDropDown[]>([brandListFirstItem]);
   const [selectedCategoryListIndex, setSelectedCategoryListIndex] = useState(0);

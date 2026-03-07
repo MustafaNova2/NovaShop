@@ -2,22 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-import AddOption from "./AddOption";
-
-// -------- ACTIONS --------
 import { getOptionSetByCatID, getSpecGroupByCatID } from "@/actions/category/categoryOptions";
-import { TOptionSet, TSpecGroup } from "@/types/common";
-import OptionSet from "./optionSet";
-import AddSpecGroup from "./addSpecGroup";
-import SpecGroup from "./specGroup";
 import { cn } from "@/shared/utils/styling";
+import { TOptionSet, TSpecGroup } from "@/types/common";
 
-interface IProps {
+import AddOption from "./AddOption";
+import AddSpecGroup from "./addSpecGroup";
+import OptionSet from "./optionSet";
+import SpecGroup from "./specGroup";
+
+type TProps = {
   categoryName: string;
   categoryID: string;
-}
+};
 
-const CategoryOptions = ({ categoryName, categoryID }: IProps) => {
+const CategoryOptions = ({ categoryName, categoryID }: TProps) => {
   const [isOption, setIsOption] = useState(true);
   const [optionSetList, setOptionSetList] = useState<TOptionSet[]>([]);
   const [specGroupList, setSpecGroupList] = useState<TSpecGroup[]>([]);
