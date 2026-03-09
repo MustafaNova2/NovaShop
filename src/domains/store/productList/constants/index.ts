@@ -1,5 +1,5 @@
-import { TListSort } from "@/types/list";
-import { TDropDown } from "@/types/uiElements";
+import { TListSort } from "@/domains/store/productList/types/";
+import { TDropDown } from "@/shared/types/uiElements";
 
 import { TFilters } from "../types";
 
